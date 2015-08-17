@@ -1,0 +1,3 @@
+# Getting Started
+
+Simple getting started from react.js website, well this is just a Hello World ... 
