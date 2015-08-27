@@ -55,6 +55,7 @@ var Comment = React.createClass({
   displayName: "Comment",
 
   render: function render() {
+    var rawMarkup = marked(this.props.children.toString(), { sanitize: true });
     return React.createElement(
       "div",
       { className: "comment__item" },
@@ -63,7 +64,7 @@ var Comment = React.createClass({
         { className: "comment__author" },
         this.props.author
       ),
-      this.props.children
+      React.createElement("span", { dangerouslySetInnerHTML: { __html: rawMarkup } })
     );
   }
 });
