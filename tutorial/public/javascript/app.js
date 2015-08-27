@@ -6,8 +6,64 @@ var CommentBox = React.createClass({
   render: function render() {
     return React.createElement(
       "div",
+      { className: "comment" },
+      React.createElement(
+        "h1",
+        null,
+        "Comments"
+      ),
+      React.createElement(CommentList, null),
+      React.createElement(CommentForm, null)
+    );
+  }
+});
+
+var CommentList = React.createClass({
+  displayName: "CommentList",
+
+  render: function render() {
+    return React.createElement(
+      "div",
+      { className: "comment__list" },
+      React.createElement(
+        Comment,
+        { author: "Paul joe" },
+        "This is one comment"
+      ),
+      React.createElement(
+        Comment,
+        { author: "Georges Black" },
+        "This is *another* comment"
+      )
+    );
+  }
+});
+
+var CommentForm = React.createClass({
+  displayName: "CommentForm",
+
+  render: function render() {
+    return React.createElement(
+      "div",
+      { className: "comment__form" },
+      "Hello, i am a comment form!"
+    );
+  }
+});
+
+var Comment = React.createClass({
+  displayName: "Comment",
+
+  render: function render() {
+    return React.createElement(
+      "div",
       { className: "comment__item" },
-      "Hello, i am a comment box!"
+      React.createElement(
+        "h2",
+        { className: "comment__author" },
+        this.props.author
+      ),
+      this.props.children
     );
   }
 });
