@@ -17,6 +17,24 @@ var CommentBox = React.createClass({
       }.bind(this)
     });
   },
+  handleCommentSubmit: function(comment) {
+    var comments    = this.state.data;
+    var newComments = comments.concat([comment]);
+    this.setState({data: newComments});
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      type: 'POST',
+      data: comment,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.log(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   componentDidMount: function() {
     this.loadCommentsFromServer();
     setInterval(this.loadCommentsFromServer, this.props.pollInterval);
@@ -26,7 +44,7 @@ var CommentBox = React.createClass({
       <div className="comment">
         <h1>Comments</h1>
         <CommentList data={this.state.data} />
-        <CommentForm />
+        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
       </div>
     );
   }
@@ -50,11 +68,31 @@ var CommentList = React.createClass({
 });
 
 var CommentForm = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+
+    var author = React.findDOMNode(this.refs.author).value.trim();
+    var text   = React.findDOMNode(this.refs.text).value.trim();
+
+    if(!author || !text){
+      return;
+    }
+
+    this.props.onCommentSubmit({author: author, text: text});
+
+    React.findDOMNode(this.refs.author).value = '';
+    React.findDOMNode(this.refs.text).value = '';
+
+    return;
+
+  },
   render: function() {
     return (
-      <div className="comment__form">
-        Hello, i am a comment form!
-      </div>
+      <form className="comment__form" onSubmit={this.handleSubmit}>
+        <input type="text" placeholder="Say your name" ref="author" />
+        <input type="text" placeholder="Say what you want" ref="text"/>
+        <button type="submit">Send it !</button>  
+      </form>
     );
   }
 });
