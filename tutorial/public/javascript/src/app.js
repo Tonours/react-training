@@ -1,14 +1,31 @@
-var data = [
-  {'author': 'Paul Joe', 'text': 'This is one comment'},
-  {'author': 'Georges Black', 'text': 'This is *another* comment'}
-];
+
 
 var CommentBox = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  loadCommentsFromServer: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.log(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  componentDidMount: function() {
+    this.loadCommentsFromServer();
+    setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+  },
   render: function() {
     return (
       <div className="comment">
         <h1>Comments</h1>
-        <CommentList data={this.props.data} />
+        <CommentList data={this.state.data} />
         <CommentForm />
       </div>
     );
@@ -57,6 +74,6 @@ var Comment = React.createClass({
 });
 
 React.render(
-  <CommentBox data={data} />,
+  <CommentBox url="comments.json" pollInterval={5000} />,
   document.getElementById('content')
 );
